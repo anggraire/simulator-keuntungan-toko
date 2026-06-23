@@ -4,86 +4,279 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 import streamlit as st
 
-# Gunakan Caching
+st.markdown("""
+<style>
+
+.stApp {
+    background-color: #fff5fa;
+}
+
+h1 {
+    color: #d63384;
+    text-align: center;
+}
+
+h2, h3 {
+    color: #c2185b;
+}
+
+[data-testid="stSidebar"] {
+    background-color: #ffe6f2;
+}
+
+div[data-testid="stMetric"] {
+    background-color: white;
+    border: 2px solid #ffb6d9;
+    padding: 15px;
+    border-radius: 20px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 @st.cache_resource
 def load_model():
-    # 1. Menyiapkan data historis sederhana
-    # Fitur: [Iklan (Juta), Diskon (%)]
-    X_train = np.array([[5, 10], [10, 20], [15, 5], [20, 25], [25, 15]])
 
-    # Target: Keuntungan (Juta)
-    y_train = np.array([50, 80, 110, 90, 150])
+    X_train = np.array([
+        [5,10],
+        [10,20],
+        [15,5],
+        [20,25],
+        [25,15]
+    ])
 
-    # 2. Melatih model (Mesin Replika)
-    model = LinearRegression().fit(X_train, y_train)
+
+    y_train = np.array([
+        50,
+        80,
+        110,
+        90,
+        150
+    ])
+
+
+    model = LinearRegression().fit(
+        X_train,
+        y_train
+    )
 
     return model
 
 
-# Organisasi Kode
+# =========================
+# BASELINE
+# =========================
+
+
 def get_baseline(model):
-    # 3. Menetapkan Skenario Dasar (Baseline)
-    # Kondisi saat ini: Iklan 10 Juta, Diskon 10%
-    baseline_input = np.array([[10, 10]])
-    baseline_pred = model.predict(baseline_input)[0]
+
+    baseline_input = np.array([[10,10]])
+
+    baseline_pred = model.predict(
+        baseline_input
+    )[0]
 
     return baseline_pred
 
 
-def run_simulation(new_iklan, new_diskon):
-    # Input baru dari user (Intervensi)
-    intervention_input = np.array([[new_iklan, new_diskon]])
 
-    # Prediksi hasil intervensi
-    prediction = model.predict(intervention_input)[0]
-
-    # Menghitung Delta (Selisih)
-    delta_y = prediction - baseline_pred
-
-    return prediction, delta_y
+# =========================
+# SIMULATION
+# =========================
 
 
-# Load model dan baseline
+def run_simulation(
+    model,
+    new_iklan,
+    new_diskon,
+    baseline_pred
+):
+
+    input_user = np.array([
+        [new_iklan,new_diskon]
+    ])
+
+
+    prediction = model.predict(
+        input_user
+    )[0]
+
+
+    delta = prediction - baseline_pred
+
+
+    return prediction, delta
+
+
+# =========================
+# LOAD MODEL
+# =========================
+
+
 model = load_model()
+
 baseline_pred = get_baseline(model)
 
-print(f"Prediksi Keuntungan Baseline: Rp {baseline_pred:.2f} Juta")
 
 
-st.title("🚀 Simulator Kebijakan Keuntungan Toko")
-st.write("Gunakan slider untuk menguji skenario 'What-If'.")
+# =========================
+# HEADER
+# =========================
 
-# --- SIDEBAR: Variabel Kontrol ---
-st.sidebar.header("Tuas Kebijakan (Intervensi)")
-iklan_slider = st.sidebar.slider("Anggaran Iklan (Juta)", 0, 50, 10)
-diskon_slider = st.sidebar.slider("Besaran Diskon (%)", 0, 50, 10)
 
-# --- ENGINE: Jalankan Simulasi ---
-hasil_pred, delta = run_simulation(iklan_slider, diskon_slider)
-
-# --- UI: Tampilkan Hasil ---
-col1, col2 = st.columns(2)
-col1.metric("Prediksi Keuntungan", f"Rp {hasil_pred:.2f} Jt", f"{delta:.2f} Jt")
-col2.write(f"Skenario ini menghasilkan perubahan sebesar {delta:.2f} Juta dibandingkan kondisi baseline.")
-
-# Validasi Baseline
-st.info(
-    f"Baseline saat ini adalah Iklan 10 Juta dan Diskon 10%, "
-    f"dengan prediksi keuntungan Rp {baseline_pred:.2f} Juta."
+st.title(
+    "🌸 Smart Store Profit Simulator AI 🌸"
 )
 
-# Visualisasi Perbandingan
+
+st.markdown(
+"""
+<div style="
+background-color:#ffd6e8;
+padding:20px;
+border-radius:20px;
+text-align:center;
+">
+
+✨ Simulator Prediksi Keuntungan Toko ✨
+
+Uji strategi iklan dan diskon menggunakan AI
+
+</div>
+""",
+unsafe_allow_html=True
+)
+
+
+
+# =========================
+# SIDEBAR
+# =========================
+
+
+st.sidebar.markdown(
+"""
+## 🌷 Pengaturan Strategi
+
+Atur variabel bisnis:
+"""
+)
+
+
+iklan_slider = st.sidebar.slider(
+    "💰 Anggaran Iklan (Juta)",
+    0,
+    50,
+    10
+)
+
+
+diskon_slider = st.sidebar.slider(
+    "🏷️ Besaran Diskon (%)",
+    0,
+    50,
+    10
+)
+
+
+# =========================
+# OUTPUT
+# =========================
+
+
+hasil_pred, delta = run_simulation(
+    model,
+    iklan_slider,
+    diskon_slider,
+    baseline_pred
+)
+
+
+
+col1, col2 = st.columns(2)
+
+
+
+with col1:
+
+    st.metric(
+        "💰 Prediksi Keuntungan",
+        f"Rp {hasil_pred:.2f} Jt",
+        f"{delta:.2f} Jt"
+    )
+
+
+
+with col2:
+
+    st.info(
+        f"""
+📊 Perubahan dari baseline:
+
+{delta:.2f} Juta
+"""
+    )
+
+
+
+
+st.success(
+f"""
+🌸 Kondisi Awal
+
+Iklan: 10 Juta
+
+Diskon: 10%
+
+Prediksi:
+Rp {baseline_pred:.2f} Juta
+"""
+)
+
+
+
 data_plot = pd.DataFrame({
-    'Skenario': ['Baseline', 'Intervensi'],
-    'Keuntungan': [baseline_pred, hasil_pred]
+
+    "Skenario":[
+        "Baseline",
+        "Intervensi"
+    ],
+
+    "Keuntungan":[
+        baseline_pred,
+        hasil_pred
+    ]
+
 })
 
-st.bar_chart(data=data_plot, x='Skenario', y='Keuntungan')
 
-# Storytelling
+st.subheader(
+    "📈 Perbandingan Keuntungan"
+)
+
+
+st.bar_chart(
+    data_plot,
+    x="Skenario",
+    y="Keuntungan"
+)
+
+
+
 if delta > 0:
-    st.success("Skenario ini menunjukkan peningkatan keuntungan dibandingkan kondisi baseline.")
+
+    st.success(
+        "✨ Strategi meningkatkan keuntungan"
+    )
+
 elif delta < 0:
-    st.warning("Skenario ini menunjukkan penurunan keuntungan dibandingkan kondisi baseline.")
+
+    st.warning(
+        "⚠️ Strategi menurunkan keuntungan"
+    )
+
 else:
-    st.info("Skenario ini menghasilkan keuntungan yang sama dengan kondisi baseline.")
+
+    st.info(
+        "Strategi sama dengan baseline"
+    )
