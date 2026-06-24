@@ -5,58 +5,138 @@ from sklearn.linear_model import LinearRegression
 import streamlit as st
 
 # =========================
-# PINK THEME UI 🌸
+# DARK AI THEME 🖤
 # =========================
 
 st.markdown("""
 <style>
 
+/* Background utama */
 .stApp {
-    background-color: #fff7fb;
+
+    background-color: #121212;
+
 }
 
+
+/* Judul */
 
 h1 {
-    color: #d85a8a;
+
+    color: #ff8fab;
+
+    text-align: center;
+
+    font-weight: 700;
+
 }
 
+
+
+/* Semua tulisan */
+
+p, span, label {
+
+    color: #eeeeee;
+
+}
+
+
+
+/* Sidebar */
 
 [data-testid="stSidebar"] {
-    background-color: #fdebf2;
+
+    background-color: #1f1f1f;
+
 }
+
 
 
 [data-testid="stSidebar"] * {
-    color: #6b3b4d;
+
+    color: #ffb3c6;
+
 }
 
+
+
+/* Slider */
+
+.stSlider label {
+
+    color: #ffb3c6 !important;
+
+}
+
+
+
+/* Metric card */
 
 div[data-testid="stMetric"] {
 
-    background-color: #fff0f5;
+    background-color: #222222;
 
-    border: 1px solid #f3b6cc;
+    border: 1px solid #ff8fab;
 
-    border-radius: 15px;
+    border-radius: 18px;
 
-    padding: 15px;
+    padding: 20px;
 
 }
 
+
+
+/* Metric label */
 
 div[data-testid="stMetricLabel"] {
-    color: #b04a73;
+
+    color: #ffb3c6;
+
 }
 
+
+
+/* Metric angka */
 
 div[data-testid="stMetricValue"] {
-    color: #7a3550;
+
+    color: #ffffff;
+
 }
 
+
+
+/* Info box */
 
 .stAlert {
+
+    background-color: #2b2b2b !important;
+
     border-radius: 15px;
+
 }
+
+
+
+.stAlert p {
+
+    color: #ffffff !important;
+
+}
+
+
+
+/* Grafik */
+
+[data-testid="stVegaLiteChart"] {
+
+    background-color: #1e1e1e;
+
+    border-radius: 15px;
+
+}
+
 
 
 </style>
@@ -108,7 +188,7 @@ baseline_pred = get_baseline(model)
 print(f"Prediksi Keuntungan Baseline: Rp {baseline_pred:.2f} Juta")
 
 
-st.title("🌸 Simulator Kebijakan Keuntungan Toko")
+st.title("Smart Store Profit Simulator AI")
 st.write("Gunakan slider untuk menguji skenario 'What-If'.")
 
 # --- SIDEBAR: Variabel Kontrol ---
